@@ -1,0 +1,15 @@
+// install virtual envoriment 
+py -m venv .venv
+
+// activate venv
+.venv/Scripts/activate
+
+// make django project
+django-admin startproject [project_name]
+
+// run server || manage.py file manage your project command
+py manage.py runserver
+
+
+// to create app 
+py manage.py startapp [app_name]

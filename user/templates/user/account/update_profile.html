@@ -1,0 +1,67 @@
+{% extends "accountLayout.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card bg-dark text-white shadow">
+                <div class="card-header  py-3">
+                    <h3 class="card-title mb-0">Update Your Profile</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{% url 'user:update-user' %}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                   
+                        <!-- name Field -->
+                        <div class="mb-4">
+                            <label for="name" class="form-label">{{ user.name.label }}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control bg-dark text-white" id="name" name="{{ user.name.name }}" 
+                                    value="{{ user.name.value }}" placeholder="Enter your name" required>
+                            </div>
+                        </div>
+
+                          <!-- Bio Field -->
+                        <div class="mb-4">
+                            <label for="bio" class="form-label">{{ user.bio.label }}</label>
+                            <div class="input-group">
+                                 <textarea class="form-control bg-dark text-white" id="bio" name="{{ user.bio.name }}" 
+                                            placeholder="Enter your bio" required>{{ user.bio.value }}</textarea>
+                            </div>
+                        </div>
+
+                          <!-- avatar Field -->
+                        <div class="mb-4">
+                            <label for="avatar" class="form-label">{{ user.avatar.label }}</label>
+                            <div class="input-group">
+                                 <input type="file" class="form-control bg-dark text-white" id="avatar" name="{{ user.avatar.name }}" 
+                                            placeholder="Upload your avatar">
+                            </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Form Validation Script -->
+<script>
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock content %}

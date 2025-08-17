@@ -1,0 +1,10 @@
+<div class="card bg-dark border-secondary mb-4">
+    <div class="card-header bg-dark text-white border-secondary">
+        TOP HOSTS
+    </div>
+    <ul class="list-group list-group-flush">
+        {% for host in top_hosted %}
+            <li class="list-group-item bg-dark text-white border-secondary">{{ host.name }}</li>
+        {% endfor %}
+    </ul>
+</div>

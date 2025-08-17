@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <!-- Profile Card -->
+    <div class="col-lg-4">
+      <div class="card bg-dark text-white">
+        <div class="card-body text-center">
+          <div class="mb-4">
+            <img src="{{user.avatar.url}}" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;" alt="{{user.name}}'s avatar"/>
+          </div>
+          <h3 class="card-title mb-0">{{user.name}}</h3>
+          <p class="text-muted">@{{user.username}}</p>
+          <!-- User Stats -->
+            <div class="row text-center">
+                <div class="col-6">
+                <h5>{{rooms.count}}</h5>
+                <small class="text-secondary">Rooms Hosted</small>
+                </div>
+                <div class="col-6">
+                <h5>{{messages.count}}</h5>
+                <small class="text-secondary">Messages</small>
+                </div>
+            </div>
+             <div class="d-flex justify-content-center my-4">
+                <a href="{% url 'user:update-user' %}" class="btn btn-outline-light">
+                <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+            </div>
+        </div>
+      </div>
+      <!-- About Section -->
+      <div class="card bg-dark text-white mt-4">
+        <div class="card-body">
+          <h5 class="card-title">About</h5>
+          <p class="card-text">{{user.bio|default:'No bio available'}}</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Activity Section -->
+    <div class="col-lg-8">
+      <!-- Recent Rooms -->
+      <div class="card bg-dark text-white mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Rooms</h5>
+          <span class="badge bg-primary">{{rooms.count}} Total</span>
+        </div>
+        <div class="card-body">
+          {% if rooms %}
+            {% include 'user/components/rooms_feed.html' %}
+          {% else %}
+            <p class="text-secondary text-center mb-0">No rooms hosted yet</p>
+          {% endif %}
+        </div>
+      </div>
+      
+  <!-- Recent Activity -->
+      <div class="card bg-dark text-white">
+        <div class="card-header">
+          <h5 class="mb-0">Recent Activity</h5>
+        </div>
+        <div class="card-body">
+          <div class="timeline" id="timeline-container" style="opacity: 0;">
+            <div class="timeline-skeleton" id="timeline-skeleton">
+              <div class="timeline-skeleton-item"></div>
+              <div class="timeline-skeleton-item"></div>
+              <div class="timeline-skeleton-item"></div>
+            </div>
+            {% for message in messages %}
+              <div class="timeline-item" style="opacity: 0; transform: translateY(20px);">
+                <div class="timeline-content">
+                  <small class="text-secondary">{{message.created_at|timesince}} ago</small>
+                  <br>
+                  <a href="{% url 'room' message.room.id %}" class="text-white"><h6>{{message.room.name}}</h6></a>
+                  <p class="text-secondary mb-0">"{{message.body|truncatechars:100}}"</p>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-muted text-center mb-0">No recent activity</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .timeline-item {
+        padding: 15px 0;
+        border-left: 2px solid rgba(255,255,255,0.1);
+        margin-left: 15px;
+        position: relative;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .timeline-item:before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 20px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #007bff;
+        transition: transform 0.3s ease;
+    }
+
+    .timeline-item:hover:before {
+        transform: scale(1.2);
+    }
+
+    .timeline-content {
+        margin-left: 20px;
+    }
+
+    .timeline-skeleton {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .timeline-skeleton-item {
+        height: 80px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.1) 75%);
+        background-size: 200% 100%;
+        border-radius: 8px;
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const timeline = document.getElementById('timeline-container');
+    const skeleton = document.getElementById('timeline-skeleton');
+    const items = timeline.querySelectorAll('.timeline-item');
+    
+    // Function to animate timeline items
+    function animateTimelineItems() {
+        items.forEach((item, index) => {
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 100 + (index * 100));
+        });
+    }
+
+    // Show content after a short delay
+    setTimeout(() => {
+        if (skeleton) {
+            skeleton.style.opacity = '0';
+            setTimeout(() => {
+                skeleton.style.display = 'none';
+                animateTimelineItems();
+            }, 300);
+        } else {
+            animateTimelineItems();
+        }
+    }, 800);
+});
+</script>
+{% endblock %}

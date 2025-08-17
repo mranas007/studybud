@@ -1,0 +1,46 @@
+<div class="d-flex flex-column gap-3">
+    {% for room in rooms %}
+       <div class="room-card text-white border border-secondary rounded p-3">
+            <div class="room-header d-flex justify-content-between align-items-center mb-2">
+                <div class="room-header-left">
+                    <img src="{{user.avatar.url}}" 
+                        alt="{{ room.host.name }}" 
+                        class="rounded-circle room-host-avatar" style="width: 40px; height: 40px; object-fit: cover;">
+                    <a href="{% url 'public-profile' room.host.id %}" class="text-secondary hover-text-primary font-weight-bold h6 mb-0">@{{ room.host.username }}</a>
+                </div>
+                <div class="room-header-right text-end">
+                    <small class="text-secondary d-block">{{ room.updated_at|timesince }} ago</small>
+                    <span class="badge bg-secondary mt-1" style="float:right;">{{ room.topic.name }}</span>
+                </div>
+            </div>
+
+            {% comment %} <div class="d-flex justify-content-between align-items-center flex-wrap mt-2"> {% endcomment %}
+            <a href="{% url 'room' room.id %}" class="room-name my-3">
+                {{ room.name }}
+            </a>
+            
+            {% comment %} </div> {% endcomment %}
+            <div class="room-footer d-flex justify-content-between align-items-center mt-2">
+                <div class="participants">
+                    <i class="bi bi-people-fill"></i>
+                    <span>{{ room.participants.count }} Joined</span>
+                </div>
+
+                <div class="btn-group">
+                    <a href="{% url 'room' room.id %}" class="btn btn-sm btn-outline-light" title="View Room">
+                        {% comment %} <i class="bi bi-eye"></i> {% endcomment %}
+                        Go to Room 
+                    </a>
+                    {% if request.user == room.host %}
+                    <a href="{% url 'update-room' room.id %}" class="btn btn-sm btn-outline-primary mx-1" title="Edit Room">
+                    <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'delete-room' room.id %}" class="btn btn-sm btn-outline-danger" title="Delete Room">
+                    <i class="bi bi-trash"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

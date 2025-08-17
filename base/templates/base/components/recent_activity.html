@@ -1,0 +1,24 @@
+<div class="card bg-dark border-secondary">
+    {% if recent_activity %}
+        <div class="card-header  bg-dark border-secondary text-white">
+            RECENT ACTIVITIES
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for activity in recent_activity %}
+                <li class="list-group-item bg-dark text-white border-secondary d-flex align-items-center">
+                    <img src="{{ activity.user.avatar.url }}" 
+                         alt="{{ activity.user.name }}" 
+                         class="rounded-circle room-host-avatar"
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                    <div class="ms-2">
+                        <a href="{% url 'public-profile' activity.user.id %}" class="text-white-50">@{{ activity.user.name }}</a>
+                        <br>
+                        <small class="text-secondary"><i class="bi bi-clock"></i> {{ activity.created_at|timesince }} ago in </small>
+                        <br>
+                        <a href="{% url 'room' activity.room.id %}" class="text-info">{{ activity.room.name }}</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="bg-dark rounded shadow-sm p-4">
+        <h3 class="mb-4 text-white">
+            <i class="bi bi-plus-circle me-2 text-info"></i>Create a New Room
+        </h3>
+        <form action="" method="POST" novalidate>
+            {% csrf_token %}
+
+            <!-- Topic Field -->
+            <div class="mb-3">
+                <label for="room_topic" class="form-label text-light">Enter a Topic</label>
+                <input 
+                    type="text" 
+                    class="form-control bg-dark text-light border-secondary" 
+                    id="room_topic"
+                    name="topic" 
+                    list="topic-list" 
+                    value="{{ room.topic.name }}" 
+                    required>
+                <datalist id="topic-list">
+                    {% for topic in topics %}
+                        <option value="{{ topic.name }}">{{ topic.name }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <!-- Room Name -->
+            <div class="mb-3">
+                <label for="room_name" class="form-label text-light">Room Name</label>
+                {% render_field form.name class="form-control bg-dark text-light border-secondary" id="room_name" %}
+            </div>
+
+            <!-- Room Description -->
+            <div class="mb-3">
+                <label for="room_description" class="form-label text-light">Room Description</label>
+                {% render_field form.description class="form-control bg-dark text-light border-secondary" id="room_description" rows="3" %}
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-between pt-3">
+                <a href="{% url 'rooms'%}" class="btn btn-outline-light">
+                    <i class="bi bi-x-circle me-1"></i>Go Back
+                </a>
+                <button type="submit" class="btn btn-info text-dark fw-bold">
+                    <i class="bi bi-check2-circle me-1"></i>Submit
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
