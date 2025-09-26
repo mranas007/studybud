@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .form import UserProfileForm, CustomUserCreationForm
 from base.models import  User, Message
+from django.db import IntegrityError
 
 # login user
 def loginView(request):
@@ -13,18 +14,15 @@ def loginView(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-            user = User.objects.get(email=email)
-        except:
-            messages.error(request, "User doesn't exists.")
-
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('rooms')  # Redirect to a success page
+        if user := User.objects.get(email=email):
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('rooms')  # Redirect to a success page
+            else:
+                messages.error(request, "Invalid credentials.")
         else:
-            messages.error(request, "Invalid credentials.")
-
+            messages.error(request, "User does not exist.")
     return render(request, 'user/account/login.html')
 
 
@@ -36,10 +34,13 @@ def registerView(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect('rooms')
+            try:
+                user = form.save()
+                login(request, user)
+                messages.success(request, "Registration successful.")
+                return redirect('rooms')
+            except IntegrityError as e:
+                messages.error(request, "This username is already taken.")
         else:
             messages.error(request, "Registration failed. Please try again.")
     return render(request, 'user/account/register.html', {'form': form})
